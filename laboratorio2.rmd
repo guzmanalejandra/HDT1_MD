@@ -1,0 +1,83 @@
+---
+title: "Laboratorio 1"
+author: "Jorge Caballeros Pérez"
+date: "2023-02-02"
+output: html_document
+---
+
+### Problema 4.12
+##### ¿Se asocian ciertos meses de lanzamiento con mejores ingresos? 
+
+
+
+```{r}
+library(ggplot2)
+
+movies <- read.csv("movies.csv")
+releaseDate <- movies$releaseDate
+releaseDates <- as.Date(releaseDate, format = "%Y-%m-%d")
+releaseMonths <- format(releaseDates, "%m")
+
+plot(releaseMonths, movies$revenue, xlab = "Release Month", ylab = "Revenue", main = "Revenue by release month")
+
+
+```
+
+Como podemos observar , hay una relación entre los meses y los mejores ingresos, dado que los mejores ingresos se dan en los meses de abril,  diciembre y noviembre, podríamos argumentar que estos son las mejores épocas para el lanzamiento de una pelicula.
+
+
+### Problema 4.13
+#####  A . ¿En qué meses se han visto los lanzamientos con mejores ingresos?
+Los meses con mejores ingresos de lanzamientos son: 
+
+* abril
+* diciembre
+* noviembre.
+
+
+
+##### ¿Cuantas películas, en promedio, se han lanzado por mes? 
+
+```{r}
+
+monthlyCount <- table(releaseMonths)
+
+mean(monthlyCount)
+
+```
+
+El output determina que el promedio de peliculas lanzadas por mes es de `833.33`.
+
+### Problema 4.14
+##### ¿Cómo se correlacionan las calificaciones con el éxito comercial? 
+
+
+```{r}
+library(ggplot2)
+
+movies <- read.csv("movies.csv")
+success <- movies$voteAvg
+revenue <- movies$revenue/1000
+plot(success ,revenue , xlab = "Revenue", ylab = " Votes Average", main = "Revenue vs Votes")
+
+
+```
+
+Los votos de la pelicula son directamente proporcionales a los ingresos, por lo que se puede decir que las calificaciones y el éxito comercial tienen la misma relación.
+
+
+
+### Problema 4.15
+##### ¿A qué género principal pertenecen las películas más largas? 
+
+```{r}
+df <- data.frame(runtime = movies$runtime, genre = movies$genres)
+
+df_sorted <- df[order(df$runtime, decreasing = TRUE),]
+
+df_sorted[1:10,]
+
+
+```
+
+Como podemos observar el genero con la duracion mas larga es el de documentales.
