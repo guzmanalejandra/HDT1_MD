@@ -1,0 +1,117 @@
+---
+title: "Analisis Exploratorio"
+author: "Mariana"
+date: "2023-02-02"
+output: html_document
+---
+
+## Analisis Exploratorio
+
+### Carga de movies
+Guardaremos los movies en un objeto llamado movies
+```{r}
+
+movies <- read.csv("movies.csv")
+
+```
+
+
+## Ejercicio 4.5  
+¿Cuántas películas se hicieron en cada año? ¿En qué año se hicieron más peñículas? Haga un gráfico de barras
+¿Cuántas  películas  se  hicieron  en  cada  año?  ¿En  qué  año  se  hicieron  más 
+películas? Haga un gráfico de barras 
+```{r}
+movies$releaseDate <- as.Date(movies$releaseDate)
+movies$year <- format(movies$releaseDate, "%Y")
+movies$year <- as.numeric(movies$year)
+movies$year <- as.factor(movies$year)
+moviesByYear <- table(movies$year) # nolint
+barplot(moviesByYear, main = "Películas por año", xlab = "Año", ylab = "Películas", col = "red") # nolint
+```
+
+## Ejercicio 4.6 
+¿Cuál es el género principal de las 20 peliculas más recientes?
+¿Cuál es el género principal que predomina en el conjunto de movies? Represéntelo usando un gráfico.
+```{r}
+popularMovie <- movies[order(movies$popularity,decreasing = TRUE),]
+top20 <- popularMovie[1:20,c("genres")]
+genres20 <- unlist(strsplit(as.character(top20), "\\|"))
+genres20
+#Ordenando
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+top20 <- getmode(genres20)
+top20
+#Graficando
+total <- unlist(strsplit(as.character(movies$genres), "\\|"))
+barplot(table(total))
+
+```
+
+## Ejercicio 4.7
+¿Las películas de qué genero principal obtuvieron mayores ganancias?
+```{r}
+movies <- read.csv("movies.csv")
+sum_by_genre <- aggregate(movies$revenue, by=list(movies$genres), sum)
+genre_with_max_earnings <- sum_by_genre[which.max(sum_by_genre$x), ]
+genre_with_max_earnings
+```
+
+## Ejercicio 4.8 
+¿La cantidad de actores influye en los ingresos de las películas?
+```{r}
+cor(movies$actorsAmount, movies$revenue)
+```
+¿se han hecho películas con más actores en los últimos años?
+```{r}
+movies$releaseDate <- as.Date(movies$releaseDate)
+movies$year <- format(movies$releaseDate, "%Y")
+movies$year <- as.numeric(movies$year)
+movies$year <- as.factor(movies$year)
+actorsByYear <- data.frame(movies$year, movies$actorsAmount)
+actorsByYear <- aggregate(actorsByYear$movies.actorsAmount, by = list(actorsByYear$movies.year), FUN = mean)
+barplot(actorsByYear$x, main = "Promedio de actores por año", xlab = "Año", ylab = "Promedio de actores", col = "red", las = 2, names.arg = actorsByYear$Group.1)
+```
+
+## Ejercicio 4.9
+¿Es posible que la cantidad de hombres y mujeres en el reparto influya en la popularidad y los ingresos de las películas?
+```{r}
+cor(movies$actorsAmount, movies$popularity)
+cor(movies$actorsAmount, movies$revenue)
+```
+## Ejercicio 4.10 
+¿Quiénes son los directores que hicieron las 20 películas mejor calificadas?
+```{r}
+movies_without_na <- movies[!is.na(movies$voteCount) & is.numeric(movies$voteCount), ] # nolint: line_length_linter.
+movies_sorted <- movies_without_na[order(movies_without_na$voteCount, decreasing = TRUE), ] # nolint: line_length_linter.
+top_20_movies <- movies_sorted[1:20, ]
+top_20_directors <- unique(top_20_movies$director)
+top_20_directors
+
+```
+
+## Ejercicio 4.11 
+¿Cómo se correlacionan los presupuestos con los ingresos? ¿Los altos
+presupuestos significan altos ingresos? Haga los gráficos que necesite, histograma,
+diagrama de dispersión?
+```{r}
+movies <- read.csv("movies.csv")
+cor(movies$revenue, movies$budget)
+# Graficando
+plot(movies$revenue, movies$budget)
+```
+
+## Preguntas extra 
+¿Cuales son las 3 peliculas que han tenido menos ganancias?
+```{r}
+movies[order(movies$revenue), c("revenue", "title")][1:3, ]
+
+```
+¿Cuál es la pelicula que cuenta con mas cantidad de actores hombres?
+```{r}
+movies$castMenAmount <- suppressWarnings(as.numeric(movies$castMenAmount))
+movies[order(movies$castMenAmount, decreasing = TRUE), c("castMenAmount", "title")][1, ] # nolint: line_length_linter.
+```
