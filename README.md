@@ -2,11 +2,11 @@
 
 Integrantes:
 
-Lucia Guzman
+Lucia Guzman 20262
 
-Mariana David
+Mariana David 20
 
-Jorge Caballeros
+Jorge Caballeros 20
 
 
 Nota: Cada integrante hizo dos preguntas extras, y estan en sus respectivos documentos.
